@@ -21,19 +21,8 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6">
-            <a href="#home" className="hover:text-gray-400">
-              Home
-            </a>
-            <a href="#about" className="hover:text-gray-400">
-              About
-            </a>
-            <a href="#services" className="hover:text-gray-400">
-              Services
-            </a>
-            <a href="#contact" className="hover:text-gray-400">
-              Contact
-            </a>
+          <div className="hidden md:flex space-x-6 py-6">
+              <h3 className='px-4'>Built in honour of my queen - Her Majesty, <b>Feyisewa</b> by her liege - The Brave One.</h3>
           </div>
 
           {/* Mobile Menu Button */}
