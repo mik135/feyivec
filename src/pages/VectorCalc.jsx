@@ -289,7 +289,7 @@ const VectorCalculator = () => {
             </select>
             <button
               onClick={handleCalculate}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg shadow-sm hover:bg-blue-600 transition-colors"
+              className="px-4 py-2 bg-[#5271ff] text-white rounded-lg shadow-sm hover:bg-blue-600 transition-colors"
             >
               Calculate
             </button>

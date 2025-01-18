@@ -8,11 +8,11 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-gray-800 text-white">
+    <nav className="bg-[#5271ff] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <a href="/" className="text-2xl font-bold">FeyiVec</a>
+            <a href="/" className="text-2xl font-extrabold text-white font-sans italic">feyvec</a>
           </div>
           <div className="hidden md:flex space-x-6 py-6">
             <h3 className='px-4'>Built in honour of my queen - Her Majesty, <b>Feyisewa</b> by her liege - The Brave One.</h3>
