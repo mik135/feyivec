@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Navbar = () => {
+const Navbar = ({ handleOpenModal }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -16,6 +16,12 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex space-x-6 py-6">
             <h3 className='px-4'>Built in honour of my queen - Her Majesty, <b>Feyisewa</b> by her liege - The Brave One.</h3>
+            <button
+              onClick={handleOpenModal}
+              className="px-4 py-2 bg-gray-500 text-white rounded-lg shadow-sm hover:bg-gray-600 transition-colors"
+            >
+              Help
+            </button>
           </div>
           <div className="md:hidden">
             <button
