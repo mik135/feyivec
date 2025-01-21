@@ -8,7 +8,7 @@ import InfoModal from '../components/InfoModal';
 const VectorCalculator = () => {
   const [vectors, setVectors] = useState([
     { x: 1, y: 0, z: 0 },
-    { x: 0, y: 1, z: 0 }
+    { x: 0, y: 1, z: 0 },
   ]);
 
   const [operation, setOperation] = useState('none');
@@ -24,6 +24,8 @@ const VectorCalculator = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAxisNumbers, setShowAxisNumbers] = useState(false);
   const axisNumbersRef = useRef([]);
+  // Added: State to track pinch-to-zoom
+  const pinchZoomRef = useRef({ distance: 0 });////
 
   useEffect(() => {
     // Show modal on first visit
@@ -40,6 +42,13 @@ const VectorCalculator = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const getTouchDistance = (touches) => {
+    const [touch1, touch2] = touches;
+    const dx = touch2.clientX - touch1.clientX;
+    const dy = touch2.clientY - touch1.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   };
 
   // Generate colors dynamically based on the number of vectors
@@ -397,24 +406,52 @@ const VectorCalculator = () => {
     }
   }, [vectors, result]);
 
+  const adjustZoom = (factor) => {
+    const camera = cameraRef.current;
+    const distance = camera.position.length();
+    const newDistance = distance * factor;
+
+    // Limit zoom levels
+    if (newDistance > 5 && newDistance < 40) {
+      camera.position.multiplyScalar(factor);
+      camera.lookAt(0, 0, 0); // Ensure the camera remains focused on the origin
+    }
+  };
+
+
   return (
     <>
       <Navbar handleOpenModal={handleOpenModal} />
       <InfoModal isOpen={isModalOpen} onClose={handleCloseModal} />
       <div className="space-y-6 p-6 bg-gray-100 rounded-xl">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 relative">
             <div
               ref={containerRef}
               className="w-full h-96 bg-white rounded-lg shadow-lg"
               style={{ maxWidth: '100%', aspectRatio: '16/9' }}
             />
+            <div className="absolute bottom-4 left-4 flex space-x-2">
+              <button
+                onClick={() => adjustZoom(1.1)} // Zoom Out
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+              >
+                -
+              </button>
+              <button
+                onClick={() => adjustZoom(0.9)} // Zoom In
+                className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+              >
+                +
+              </button> 
+            </div>
             <button
               onClick={() => setShowAxisNumbers(!showAxisNumbers)}
-              className="absolute top-12 right-4 px-3 py-1 bg-white/80 hover:bg-white text-gray-800 rounded-md shadow-sm text-sm transition-colors"
+              className="absolute top-4 right-4 px-3 py-1 bg-white/80 hover:bg-white text-gray-800 rounded-md shadow-sm text-sm transition-colors"
             >
               {showAxisNumbers ? 'Hide Numbers' : 'Show Numbers'}
             </button>
+            
           </div>
           <div className="space-y-4">
             <div className="flex justify-end">
@@ -422,7 +459,7 @@ const VectorCalculator = () => {
                 onClick={addVector}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg shadow-sm hover:bg-green-600 transition-colors"
               >
-                Add Vector
+                Create Vector
               </button>
             </div>
             <div className="space-y-4 max-h-[400px] overflow-y-auto">
