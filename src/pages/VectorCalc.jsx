@@ -22,6 +22,8 @@ const VectorCalculator = () => {
   const isDraggingRef = useRef(false);
   const startRef = useRef({ x: 0, y: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAxisNumbers, setShowAxisNumbers] = useState(false);
+  const axisNumbersRef = useRef([]);
 
   useEffect(() => {
     // Show modal on first visit
@@ -133,6 +135,76 @@ const VectorCalculator = () => {
     rendererRef.current.setSize(containerRef.current.offsetWidth, containerRef.current.offsetHeight);
     containerRef.current.appendChild(rendererRef.current.domElement);
 
+    const createAxisNumbers = () => {
+      const numbers = [];
+
+      // Create numbers for each axis (1 to 10)
+      for (let i = 1; i <= 10; i++) {
+        // X axis numbers
+        const xCanvas = document.createElement('canvas');
+        xCanvas.width = 32;
+        xCanvas.height = 32;
+        const xCtx = xCanvas.getContext('2d');
+        xCtx.fillStyle = '#000000';
+        xCtx.font = '16px Arial';
+        xCtx.textAlign = 'center';
+        xCtx.textBaseline = 'middle';
+        xCtx.fillText(i.toString(), 16, 16);
+
+        const xTexture = new THREE.CanvasTexture(xCanvas);
+        const xMaterial = new THREE.SpriteMaterial({ map: xTexture });
+        const xSprite = new THREE.Sprite(xMaterial);
+        xSprite.position.set(i, -0.3, 0);
+        xSprite.scale.set(0.5, 0.5, 1);
+        numbers.push(xSprite);
+
+        // Y axis numbers
+        const yCanvas = document.createElement('canvas');
+        yCanvas.width = 32;
+        yCanvas.height = 32;
+        const yCtx = yCanvas.getContext('2d');
+        yCtx.fillStyle = '#000000';
+        yCtx.font = '16px Arial';
+        yCtx.textAlign = 'center';
+        yCtx.textBaseline = 'middle';
+        yCtx.fillText(i.toString(), 16, 16);
+
+        const yTexture = new THREE.CanvasTexture(yCanvas);
+        const yMaterial = new THREE.SpriteMaterial({ map: yTexture });
+        const ySprite = new THREE.Sprite(yMaterial);
+        ySprite.position.set(-0.3, i, 0);
+        ySprite.scale.set(0.5, 0.5, 1);
+        numbers.push(ySprite);
+
+        // Z axis numbers
+        const zCanvas = document.createElement('canvas');
+        zCanvas.width = 32;
+        zCanvas.height = 32;
+        const zCtx = zCanvas.getContext('2d');
+        zCtx.fillStyle = '#000000';
+        zCtx.font = '16px Arial';
+        zCtx.textAlign = 'center';
+        zCtx.textBaseline = 'middle';
+        zCtx.fillText(i.toString(), 16, 16);
+
+        const zTexture = new THREE.CanvasTexture(zCanvas);
+        const zMaterial = new THREE.SpriteMaterial({ map: zTexture });
+        const zSprite = new THREE.Sprite(zMaterial);
+        zSprite.position.set(0, -0.3, i);
+        zSprite.scale.set(0.5, 0.5, 1);
+        numbers.push(zSprite);
+      }
+
+      return numbers;
+    };
+
+    const axisNumbers = createAxisNumbers();
+    axisNumbersRef.current = axisNumbers;
+    axisNumbers.forEach(number => {
+      number.visible = showAxisNumbers;
+      sceneRef.current.add(number);
+    });
+
     // Add axis labels
     const addAxisLabel = (position, text) => {
       const canvas = document.createElement('canvas');
@@ -236,6 +308,12 @@ const VectorCalculator = () => {
       cameraRef.current.lookAt(0, 0, 0);
 
       rendererRef.current.render(sceneRef.current, cameraRef.current);
+
+      axisNumbersRef.current.forEach(sprite => {
+        sprite.quaternion.copy(cameraRef.current.quaternion);
+      });
+
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
     };
     animate();
 
@@ -257,6 +335,15 @@ const VectorCalculator = () => {
       }
     };
   }, []);
+
+  // Add effect to handle visibility toggle
+  useEffect(() => {
+    if (axisNumbersRef.current) {
+      axisNumbersRef.current.forEach(number => {
+        number.visible = showAxisNumbers;
+      });
+    }
+  }, [showAxisNumbers]);
 
   // Update vectors in the scene
   useEffect(() => {
@@ -319,6 +406,12 @@ const VectorCalculator = () => {
               className="w-full h-96 bg-white rounded-lg shadow-lg"
               style={{ maxWidth: '100%', aspectRatio: '16/9' }}
             />
+            <button
+              onClick={() => setShowAxisNumbers(!showAxisNumbers)}
+              className="absolute top-12 right-4 px-3 py-1 bg-white/80 hover:bg-white text-gray-800 rounded-md shadow-sm text-sm transition-colors"
+            >
+              {showAxisNumbers ? 'Hide Numbers' : 'Show Numbers'}
+            </button>
           </div>
           <div className="space-y-4">
             <div className="flex justify-end">
