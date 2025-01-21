@@ -127,7 +127,8 @@ const VectorCalculator = () => {
     // Camera setup
     const aspectRatio = containerRef.current.offsetWidth / containerRef.current.offsetHeight;
     cameraRef.current = new THREE.PerspectiveCamera(75, aspectRatio, 0.1, 1000);
-    cameraRef.current.position.set(5, 5, 5);
+    // Modified: Updated camera position for better view
+    cameraRef.current.position.set(10, 10, 10); // Changed from 5, 5, 5
     cameraRef.current.lookAt(0, 0, 0);
 
     // Renderer setup
@@ -139,7 +140,8 @@ const VectorCalculator = () => {
       const numbers = [];
 
       // Create numbers for each axis (1 to 10)
-      for (let i = 1; i <= 10; i++) {
+      for (let i = -10; i <= 10; i++) {
+        if (i === 0) continue;
         // X axis numbers
         const xCanvas = document.createElement('canvas');
         xCanvas.width = 32;
@@ -225,9 +227,9 @@ const VectorCalculator = () => {
       return sprite;
     };
 
-    const xLabel = addAxisLabel(new THREE.Vector3(5.5, 0, 0), 'X');
-    const yLabel = addAxisLabel(new THREE.Vector3(0, 5.5, 0), 'Y');
-    const zLabel = addAxisLabel(new THREE.Vector3(0, 0, 5.5), 'Z');
+    const xLabel = addAxisLabel(new THREE.Vector3(11, 0, 0), 'X'); // Changed from 5.5 to 11
+    const yLabel = addAxisLabel(new THREE.Vector3(0, 11, 0), 'Y'); // Changed from 5.5 to 11
+    const zLabel = addAxisLabel(new THREE.Vector3(0, 0, 11), 'Z'); // Changed from 5.5 to 11
 
     sceneRef.current.add(xLabel);
     sceneRef.current.add(yLabel);
@@ -236,11 +238,12 @@ const VectorCalculator = () => {
     axisLabelsRef.current = [xLabel, yLabel, zLabel];
 
     // Grid and axes
-    const axesHelper = new THREE.AxesHelper(5);
+    const axesHelper = new THREE.AxesHelper(10);
     axesHelper.material.linewidth = 2;
     sceneRef.current.add(axesHelper);
 
-    const gridHelper = new THREE.GridHelper(10, 10, 0x888888, 0xdddddd);
+    const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0xdddddd); // Changed size from 10 to 20
+    gridHelper.position.set(0, 0, 0); // Added to ensure grid is centered
     gridHelper.material.opacity = 0.5;
     gridHelper.material.transparent = true;
     sceneRef.current.add(gridHelper);
@@ -283,7 +286,7 @@ const VectorCalculator = () => {
     const handleWheel = (event) => {
       const delta = event.deltaY * 0.001;
       const distance = cameraRef.current.position.length();
-      if ((distance > 2 || delta > 0) && (distance < 20 || delta < 0)) {
+      if ((distance > 5 || delta > 0) && (distance < 40 || delta < 0)) { // Changed from 2/20 to 5/40
         cameraRef.current.position.multiplyScalar(1 + delta);
       }
     };
